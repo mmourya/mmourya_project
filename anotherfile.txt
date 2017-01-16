@@ -1,0 +1,17 @@
+var fs = require('fs'); 
+var mime = require('mime');
+
+app.get("/download", function(req, res){
+	var fileName = 'template'+(new Date()).toLocaleString().replace(/(\/|\s|,|:)/g,'')+'.xlsx';
+	var template = './template.xlsx';
+	var contentType = mime.lookup(template);
+	fs.readFile(template, function (err, file) {
+      res.writeHead(200, {
+        "Content-Disposition": "attachment;filename=" + fileName,
+        'Content-Type': contentType,
+        'Content-Length': file.length
+      });
+      res.write(file);
+      res.end();
+    });
+});
