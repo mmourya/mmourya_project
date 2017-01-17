@@ -1,17 +1,76 @@
-var fs = require('fs'); 
-var mime = require('mime');
+<html ng-app="myApp">
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-messages.min.js"></script>
+	</head>
+	<body>
+		<form name="employeeForm">
+			<input type="email" name="username" ng-model="username" required> {{ employeeForm.username.$error }}
+			<div ng-messages="employeeForm.username.$error">
+				<div ng-message="required">Please enter a value for this field.</div>
+				<div ng-message="email">This field must be a valid email address.</div>
+				<div ng-message="maxlength">This field can be at most 15 characters long.</div>
+			</div>
+			<div ng-messages="employeeForm.username.$error" role="alert">
+			  <div ng-messages-include="error-messages"></div>
+			</div>
+		</form>
+		<my-dir></my-dir>
+		
+		{{ 1484643055700 | date:'dd MMM, yyyy'}}
+		
+		<ul>
+			<li ng-repeat="i in [1,2,3]">{{i}}</li>
+		</ul>
+		
+		<label>Check me check multiple: <input type="checkbox" ng-model="open"></label><br/>
+		<details id="details" ng-open="open">
+		   <summary>Show/Hide me</summary>
+		</details>
+		
+		<div ng-controller="myController">
+			<select ng-options="item as item.label for item in items track by item.id" ng-model="selected"></select>
+			
+			<label>List: <input name="namesInput" ng-model="names" ng-list=" | " required></label> <!-- can add delimiter -->
+			
+		</div>
+		
+		<script type="text/ng-template" id="error-messages">
+		  <div ng-message="required">This field is required</div>
+		  <div ng-message="email">This field must be a valid email address.</div>
+		</script>
 
-app.get("/download", function(req, res){
-	var fileName = 'template'+(new Date()).toLocaleString().replace(/(\/|\s|,|:)/g,'')+'.xlsx';
-	var template = './template.xlsx';
-	var contentType = mime.lookup(template);
-	fs.readFile(template, function (err, file) {
-      res.writeHead(200, {
-        "Content-Disposition": "attachment;filename=" + fileName,
-        'Content-Type': contentType,
-        'Content-Length': file.length
-      });
-      res.write(file);
-      res.end();
-    });
-});
+
+		
+		<script>
+			var myApp = angular.module("myApp", ['ngMessages']);
+			
+			myApp.controller("myController", function($scope){
+				$scope.items = [{
+				  id: 1,
+				  label: 'aLabel',
+				  subItem: { name: 'aSubItem' }
+				}, {
+				  id: 2,
+				  label: 'bLabel',
+				  subItem: { name: 'bSubItem' }
+				}];
+			$scope.names = ['morpheus', 'neo', 'trinity'];
+			});
+			
+			myApp.config(['$compileProvider', function ($compileProvider) {
+			  $compileProvider.debugInfoEnabled(false); //check it will not add scope class to html 
+			  $compileProvider.commentDirectivesEnabled(false);
+			  $compileProvider.cssClassDirectivesEnabled(false);
+			}]);
+			
+			myApp.directive("myDir", function(){
+				return {
+					template: "<h1>My Directive</h1>"
+				}
+			});
+		</script>
+	</body>
+</html>
+
+<!-- catch(errorCallback) – shorthand for promise.then(null, errorCallback) -->
